@@ -1,12 +1,636 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Psi Thamiris</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Psi Thamiris</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Nunito', sans-serif; background: #f8f5ff; min-height: 100vh; }
+:root {
+  --grad1: linear-gradient(135deg, #a855f7 0%, #7c3aed 40%, #4f86c6 100%);
+  --grad2: linear-gradient(135deg, #c084fc 0%, #a855f7 100%);
+  --purple: #7c3aed;
+  --purple-light: #a855f7;
+  --purple-pale: #f3e8ff;
+  --bg: #f8f5ff;
+  --text: #1e1b2e;
+  --muted: #7c6f9a;
+  --green: #10b981;
+  --red: #ef4444;
+  --yellow: #f59e0b;
+  --white: #ffffff;
+}
+.screen { display: none; min-height: 100vh; padding-bottom: 80px; }
+.screen.active { display: block; }
+.header {
+  background: var(--grad1);
+  padding: 20px 20px 28px;
+  border-radius: 0 0 28px 28px;
+  box-shadow: 0 8px 32px rgba(124,58,237,0.25);
+  display: flex; align-items: center; gap: 12;
+}
+.header-title { font-size: 22px; font-weight: 800; color: #fff; flex: 1; }
+.header-sub { font-size: 13px; color: rgba(255,255,255,0.75); margin-top: 2px; }
+.navbar {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: #fff; border-top: 1px solid #ede9fe;
+  display: flex; box-shadow: 0 -4px 20px rgba(124,58,237,0.1);
+  z-index: 100; max-width: 480px; margin: 0 auto;
+}
+.nav-btn {
+  flex: 1; border: none; background: none; padding: 12px 0 10px;
+  cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3;
+  font-family: 'Nunito', sans-serif;
+}
+.nav-btn span.icon { font-size: 22px; }
+.nav-btn span.label { font-size: 11px; color: var(--muted); font-weight: 400; }
+.nav-btn.active span.label { color: var(--purple); font-weight: 700; }
+.nav-btn.active::after {
+  content: ''; display: block; width: 20px; height: 3px;
+  border-radius: 2px; background: var(--purple-light); margin-top: 2px;
+}
+.card {
+  background: #fff; border-radius: 18px; padding: 16px;
+  box-shadow: 0 2px 10px rgba(124,58,237,0.07); margin-bottom: 12px;
+}
+.p16 { padding: 16px; }
+.avatar {
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-weight: 700; flex-shrink: 0;
+}
+input, textarea, select {
+  width: 100%; border: 1.5px solid #ede9fe; border-radius: 12px;
+  padding: 12px 14px; font-size: 14px; font-family: 'Nunito', sans-serif;
+  color: var(--text); outline: none; background: #fff;
+}
+input:focus, textarea:focus, select:focus { border-color: #c084fc; }
+textarea { resize: none; }
+.btn {
+  border: none; border-radius: 12px; padding: 12px 16px;
+  font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 14px;
+  cursor: pointer; transition: opacity 0.2s;
+}
+.btn:hover { opacity: 0.9; }
+.btn-primary { background: var(--grad1); color: #fff; }
+.btn-green { background: #25D366; color: #fff; }
+.btn-purple { background: var(--purple-pale); color: var(--purple); }
+.btn-full { width: 100%; }
+.label-sm {
+  font-size: 12px; font-weight: 700; color: var(--purple);
+  letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; display: block;
+}
+.badge {
+  font-size: 12px; font-weight: 700; padding: 4px 10px;
+  border-radius: 20px; display: inline-block;
+}
+.badge-green { background: #f0fdf4; color: var(--green); }
+.badge-red { background: #fef2f2; color: var(--red); }
+.badge-yellow { background: #fffbeb; color: var(--yellow); }
+.tag {
+  font-size: 12px; font-weight: 600; padding: 4px 10px;
+  border-radius: 20px; display: inline-block; margin-bottom: 4px;
+}
+.tag-purple { background: var(--purple-pale); color: var(--purple); }
+.tag-yellow { background: #fffbeb; color: #92400e; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.flex { display: flex; }
+.flex-center { align-items: center; }
+.flex-between { justify-content: space-between; }
+.gap8 { gap: 8px; }
+.gap12 { gap: 12px; }
+.gap14 { gap: 14px; }
+.col { flex-direction: column; }
+.f1 { flex: 1; }
+.mb8 { margin-bottom: 8px; }
+.mb12 { margin-bottom: 12px; }
+.mb16 { margin-bottom: 16px; }
+.mt12 { margin-top: 12px; }
+.mt16 { margin-top: 16px; }
+.text-muted { color: var(--muted); font-size: 13px; }
+.text-purple { color: var(--purple); }
+.fw800 { font-weight: 800; }
+.fw700 { font-weight: 700; }
+.fs15 { font-size: 15px; }
+.fs14 { font-size: 14px; }
+.fs13 { font-size: 13px; }
+.fs20 { font-size: 20px; }
+.fs24 { font-size: 24px; }
+.border-green { border-left: 4px solid var(--green); }
+.border-yellow { border-left: 4px solid var(--yellow); }
+.border-red { border-left: 4px solid var(--red); }
+.tab-bar {
+  display: flex; background: #fff; border-radius: 14px; padding: 4px;
+  margin-bottom: 16px; box-shadow: 0 2px 8px rgba(124,58,237,0.08);
+}
+.tab-btn {
+  flex: 1; border: none; border-radius: 10px; padding: 10px;
+  background: transparent; color: var(--muted);
+  font-weight: 700; font-size: 14px; cursor: pointer;
+  font-family: 'Nunito', sans-serif; transition: all 0.2s;
+}
+.tab-btn.active { background: var(--grad2); color: #fff; }
+.day-btn {
+  flex-shrink: 0; background: rgba(255,255,255,0.2);
+  border: none; border-radius: 14px; padding: 10px 14px; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; gap: 2;
+}
+.day-btn.active { background: #fff; }
+.day-btn.active .day-num { color: var(--purple); }
+.day-btn.active .day-label { color: var(--purple); }
+.day-num { font-size: 18px; font-weight: 800; color: #fff; }
+.day-label { font-size: 11px; color: #fff; font-weight: 600; }
+.dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.8); }
+.dot.active { background: var(--purple-light); }
+.search-bar {
+  background: #fff; border-radius: 16px; display: flex; align-items: center;
+  padding: 12px 16px; box-shadow: 0 2px 12px rgba(124,58,237,0.1); margin-bottom: 16px;
+}
+.search-bar input { border: none; font-size: 15px; }
+.empty { text-align: center; padding: 40px; color: var(--muted); }
+.empty .emoji { font-size: 40px; margin-bottom: 10px; }
+.stat-card {
+  background: rgba(255,255,255,0.2); border-radius: 16px; padding: 14px 16px;
+}
+.stat-label { font-size: 12px; color: rgba(255,255,255,0.8); font-weight: 600; }
+.stat-value { font-size: 24px; font-weight: 800; color: #fff; }
+#ia-result { display: flex; flex-direction: column; gap: 12px; margin-top: 12px; }
+.result-section { background: #fff; border-radius: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(124,58,237,0.07); }
+.result-row { display: flex; gap: 8px; margin-bottom: 6px; align-items: flex-start; }
+.result-bullet { font-size: 14px; flex-shrink: 0; }
+.loading { text-align: center; padding: 20px; color: var(--muted); }
+.max480 { max-width: 480px; margin: 0 auto; }
+</style>
+</head>
+<body>
+<div class="max480">
+
+<!-- PACIENTES SCREEN -->
+<div id="screen-pacientes" class="screen active">
+  <div class="header">
+    <div>
+      <div class="header-title">🧠 Psi.app</div>
+    </div>
+  </div>
+  <div class="p16">
+    <div class="search-bar">
+      <span style="margin-right:10px;font-size:18px">🔍</span>
+      <input type="text" id="search-input" placeholder="Buscar paciente..." oninput="filterPatients()">
+    </div>
+    <div class="flex flex-between flex-center mb16">
+      <div class="fw800 fs15" style="color:var(--text)">Pacientes ativos <span id="patient-count" class="text-muted fw400"></span></div>
+      <button class="btn btn-primary" style="padding:8px 16px;font-size:13px;border-radius:20px" onclick="showAddPatient()">+ Adicionar</button>
+    </div>
+    <div id="patient-list"></div>
+  </div>
+</div>
+
+<!-- PACIENTE DETALHE -->
+<div id="screen-patient-detail" class="screen">
+  <div class="header" id="detail-header">
+    <button class="btn" style="background:rgba(255,255,255,0.2);color:#fff;font-size:14px;padding:8px 14px" onclick="showScreen('pacientes')">← Pacientes</button>
+    <div class="fw700 f1" style="color:#fff;font-size:16px;text-align:center" id="detail-name"></div>
+    <div style="width:80px"></div>
+  </div>
+  <div class="p16" id="detail-content"></div>
+</div>
+
+<!-- ADICIONAR PACIENTE -->
+<div id="screen-add-patient" class="screen">
+  <div class="header">
+    <button class="btn" style="background:rgba(255,255,255,0.2);color:#fff;font-size:14px;padding:8px 14px" onclick="showScreen('pacientes')">← Cancelar</button>
+    <div class="fw700 f1" style="color:#fff;font-size:16px;text-align:center">Nova Paciente</div>
+    <div style="width:80px"></div>
+  </div>
+  <div class="p16 flex col gap14">
+    <div><label class="label-sm">Nome completo *</label><input id="new-name" type="text" placeholder="Ex: Maria Silva"></div>
+    <div><label class="label-sm">Telefone (WhatsApp)</label><input id="new-phone" type="tel" placeholder="Ex: 85999990000"></div>
+    <div><label class="label-sm">Valor da sessão (R$)</label><input id="new-value" type="number" placeholder="Ex: 150"></div>
+    <div><label class="label-sm">Anotações iniciais</label><textarea id="new-notes" rows="4" placeholder="Queixa principal, histórico..."></textarea></div>
+    <button class="btn btn-primary btn-full" style="padding:16px;font-size:16px;border-radius:14px;margin-top:8px" onclick="addPatient()">+ Adicionar Paciente</button>
+  </div>
+</div>
+
+<!-- AGENDA SCREEN -->
+<div id="screen-agenda" class="screen">
+  <div class="header">
+    <div class="header-title mb8">📅 Agenda</div>
+    <div class="flex gap8" style="overflow-x:auto;padding-bottom:4px" id="day-selector"></div>
+  </div>
+  <div class="p16" id="agenda-sessions"></div>
+</div>
+
+<!-- FINANCEIRO SCREEN -->
+<div id="screen-financeiro" class="screen">
+  <div class="header">
+    <div class="header-title mb8">💰 Financeiro</div>
+    <div class="grid2">
+      <div class="stat-card"><div class="stat-label">RECEBIDO / MÊS</div><div class="stat-value" id="total-recebido">R$ 0</div></div>
+      <div class="stat-card"><div class="stat-label">A RECEBER</div><div class="stat-value" id="total-pendente">R$ 0</div></div>
+    </div>
+  </div>
+  <div class="p16">
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchFinTab('resumo',this)">📊 Resumo</button>
+      <button class="tab-btn" onclick="switchFinTab('pendentes',this)" id="pendentes-tab">⚠️ Pendentes</button>
+    </div>
+    <div id="fin-resumo"></div>
+    <div id="fin-pendentes" style="display:none"></div>
+  </div>
+</div>
+
+<!-- SESSÃO IA SCREEN -->
+<div id="screen-sessao" class="screen">
+  <div class="header">
+    <div class="header-title">🧠 Sessão + IA</div>
+    <div class="header-sub">Sala de atendimento e análise clínica</div>
+  </div>
+  <div class="p16">
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchIATab('sala',this)">🎥 Sala</button>
+      <button class="tab-btn" onclick="switchIATab('ia',this)">🤖 Análise IA</button>
+    </div>
+    <div class="card mb12">
+      <label class="label-sm">PACIENTE DA SESSÃO</label>
+      <select id="ia-patient"></select>
+    </div>
+    <div id="ia-sala">
+      <div class="card mb12">
+        <label class="label-sm">🎥 SALA DE VIDEOCHAMADA</label>
+        <button class="btn btn-primary btn-full mb12" style="padding:14px;font-size:15px;border-radius:14px" onclick="generateMeet()">✨ Gerar link Google Meet</button>
+        <div id="meet-result" style="display:none">
+          <div id="meet-link-display" style="background:var(--purple-pale);border-radius:12px;padding:12px 14px;margin-bottom:10px;font-size:13px;color:var(--purple);font-weight:600;word-break:break-all"></div>
+          <div class="flex gap8">
+            <a id="meet-link-open" href="#" target="_blank" class="btn f1" style="background:#4285F4;color:#fff;text-align:center;text-decoration:none;display:block">📹 Entrar</a>
+            <button class="btn btn-green f1" onclick="sendMeetWA()">💬 Enviar link</button>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="font-size:13px;color:var(--muted);line-height:1.6">
+        <div class="label-sm">💡 DICA</div>
+        Após a sessão, ative a <strong>transcrição automática</strong> do Google Meet (Atividades → Transcrição). Cole o texto na aba <strong>Análise IA</strong> para gerar o resumo clínico automaticamente.
+      </div>
+    </div>
+    <div id="ia-analysis" style="display:none">
+      <div class="card mb12">
+        <label class="label-sm">📋 COLE A TRANSCRIÇÃO DA SESSÃO</label>
+        <textarea id="transcript" rows="8" placeholder="Cole aqui a transcrição gerada pelo Google Meet ou Zoom..."></textarea>
+        <button class="btn btn-primary btn-full mt12" style="padding:14px;font-size:15px;border-radius:14px" onclick="analyzeTranscript()" id="analyze-btn">🧠 Analisar com IA</button>
+      </div>
+      <div id="ia-result"></div>
+    </div>
+  </div>
+</div>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <button class="nav-btn active" onclick="showScreen('pacientes',this)"><span class="icon">👥</span><span class="label">Pacientes</span></button>
+  <button class="nav-btn" onclick="showScreen('agenda',this)"><span class="icon">📅</span><span class="label">Agenda</span></button>
+  <button class="nav-btn" onclick="showScreen('financeiro',this)"><span class="icon">💰</span><span class="label">Financeiro</span></button>
+  <button class="nav-btn" onclick="showScreen('sessao',this)"><span class="icon">🧠</span><span class="label">Sessão IA</span></button>
+</nav>
+
+</div>
+
+<script>
+const API_KEY = 'COLOQUE_SUA_CHAVE_AQUI';
+
+let patients = [
+  {id:1,name:"Vanessa Hersbach",phone:"85999990001",nextSession:"2026-06-01",value:180,status:"ativo",notes:"Ansiedade e relacionamentos."},
+  {id:2,name:"João Mendes",phone:"85999990002",nextSession:"2026-06-01",value:150,status:"ativo",notes:"Luto e autoconhecimento."},
+  {id:3,name:"Livia Esteves",phone:"85999990003",nextSession:"2026-06-01",value:180,status:"ativo",notes:"Burnout profissional."},
+  {id:4,name:"Arthur Pinheiro",phone:"85999990004",nextSession:"2026-06-01",value:150,status:"ativo",notes:"Questões familiares."},
+  {id:5,name:"Louis Phelippe",phone:"85999990005",nextSession:"2026-06-02",value:150,status:"ativo",notes:"Depressão leve."},
+];
+let sessions = [
+  {id:1,patientId:1,date:"2026-05-26",time:"09:00",status:"confirmada",paid:true},
+  {id:2,patientId:2,date:"2026-05-26",time:"10:00",status:"confirmada",paid:false},
+  {id:3,patientId:3,date:"2026-05-27",time:"14:00",status:"pendente",paid:false},
+  {id:4,patientId:4,date:"2026-05-28",time:"15:00",status:"pendente",paid:false},
+  {id:5,patientId:5,date:"2026-05-29",time:"11:00",status:"confirmada",paid:true},
+];
+let selectedDate = "2026-05-26";
+let currentNavBtn = null;
+let meetLink = "";
+
+function avatar(name,size=40){
+  const initials=name.split(" ").slice(0,2).map(w=>w[0]).join("").toUpperCase();
+  const hue=name.charCodeAt(0)*7%360;
+  return `<div class="avatar" style="width:${size}px;height:${size}px;background:hsl(${hue},60%,75%);font-size:${size*0.35}px;color:hsl(${hue},60%,30%)">${initials}</div>`;
+}
+
+function daysUntil(d){return Math.ceil((new Date(d)-new Date())/86400000);}
+
+function showScreen(name, btn){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  if(name==='agenda') renderAgenda();
+  if(name==='financeiro') renderFinanceiro();
+  if(name==='sessao') renderIAPatients();
+  if(name==='pacientes') renderPatients();
+}
+
+function showAddPatient(){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-add-patient').classList.add('active');
+}
+
+function showPatientDetail(id){
+  const p=patients.find(x=>x.id===id);
+  if(!p) return;
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-patient-detail').classList.add('active');
+  document.getElementById('detail-name').textContent=p.name;
+  const patSessions=sessions.filter(s=>s.patientId===id);
+  const hue=p.name.charCodeAt(0)*7%360;
+  document.getElementById('detail-content').innerHTML=`
+    <div class="card mb12">
+      <div class="flex flex-center gap14 mb12">
+        ${avatar(p.name,56)}
+        <div><div class="fw800 fs15" style="color:var(--text)">${p.name}</div><div class="text-muted">📱 ${p.phone}</div></div>
+      </div>
+      <div class="grid2">
+        <div style="background:var(--purple-pale);border-radius:12px;padding:10px 14px">
+          <div style="font-size:11px;color:var(--purple);font-weight:700">VALOR/SESSÃO</div>
+          <div style="font-size:20px;font-weight:800;color:var(--purple)">R$ ${p.value}</div>
+        </div>
+        <div style="background:#f0fdf4;border-radius:12px;padding:10px 14px">
+          <div style="font-size:11px;color:var(--green);font-weight:700">STATUS</div>
+          <div style="font-size:16px;font-weight:800;color:var(--green)">${p.status}</div>
+        </div>
+      </div>
+    </div>
+    <div class="card mb12">
+      <div class="fw700 fs15 mb8" style="color:var(--text)">📝 Prontuário</div>
+      <textarea rows="5" style="width:100%">${p.notes}</textarea>
+    </div>
+    <div class="card mb12">
+      <div class="fw700 fs15 mb12" style="color:var(--text)">📋 Sessões</div>
+      ${patSessions.length===0?'<div class="empty"><div>Nenhuma sessão registrada</div></div>':patSessions.map(s=>`
+        <div class="flex flex-between flex-center" style="padding:10px 0;border-bottom:1px solid var(--purple-pale)">
+          <div><div class="fw600 fs14" style="color:var(--text)">${s.date} · ${s.time}</div><div class="text-muted">${s.status}</div></div>
+          <span class="badge ${s.paid?'badge-green':'badge-red'}">${s.paid?'Pago':'Pendente'}</span>
+        </div>`).join('')}
+    </div>
+    <div class="flex gap8 mt16">
+      <a href="https://wa.me/55${p.phone}" target="_blank" class="btn btn-green f1" style="text-align:center;text-decoration:none;display:block">💬 WhatsApp</a>
+      <button class="btn f1" style="background:var(--grad2);color:#fff">📅 Agendar</button>
+    </div>
+  `;
+}
+
+function renderPatients(list){
+  list=list||patients;
+  document.getElementById('patient-count').textContent=`(${list.length})`;
+  const el=document.getElementById('patient-list');
+  if(list.length===0){el.innerHTML='<div class="empty"><div class="emoji">🔍</div><div>Nenhuma paciente encontrada</div></div>';return;}
+  el.innerHTML=list.map(p=>{
+    const days=daysUntil(p.nextSession);
+    return `<div class="card flex flex-center gap14" style="cursor:pointer" onclick="showPatientDetail(${p.id})">
+      ${avatar(p.name)}
+      <div class="f1">
+        <div class="fw700 fs15" style="color:var(--text)">${p.name}</div>
+        <div class="text-muted">${p.nextSession?`● Próxima em ${days} dia${days!==1?'s':''}`:'Sem sessão agendada'}</div>
+      </div>
+      <a href="https://wa.me/55${p.phone}" onclick="event.stopPropagation()" target="_blank" style="background:#25D366;border-radius:12px;padding:8px 10px;font-size:18px;text-decoration:none">💬</a>
+    </div>`;
+  }).join('');
+}
+
+function filterPatients(){
+  const q=document.getElementById('search-input').value.toLowerCase();
+  renderPatients(patients.filter(p=>p.name.toLowerCase().includes(q)));
+}
+
+function addPatient(){
+  const name=document.getElementById('new-name').value.trim();
+  if(!name){alert('Nome é obrigatório');return;}
+  patients.push({
+    id:Date.now(),name,
+    phone:document.getElementById('new-phone').value,
+    value:Number(document.getElementById('new-value').value)||150,
+    notes:document.getElementById('new-notes').value,
+    status:'ativo',nextSession:''
+  });
+  document.getElementById('new-name').value='';
+  document.getElementById('new-phone').value='';
+  document.getElementById('new-value').value='';
+  document.getElementById('new-notes').value='';
+  showScreen('pacientes');
+}
+
+const days=["2026-05-26","2026-05-27","2026-05-28","2026-05-29","2026-05-30","2026-05-31","2026-06-01"];
+const dayLabels=["Seg","Ter","Qua","Qui","Sex","Sáb","Dom"];
+const dayNums=[26,27,28,29,30,31,1];
+
+function renderAgenda(){
+  const ds=document.getElementById('day-selector');
+  ds.innerHTML=days.map((d,i)=>{
+    const hasSessions=sessions.some(s=>s.date===d);
+    return `<button class="day-btn${d===selectedDate?' active':''}" onclick="selectDay('${d}')">
+      <span class="day-label">${dayLabels[i]}</span>
+      <span class="day-num">${dayNums[i]}</span>
+      ${hasSessions?`<div class="dot${d===selectedDate?' active':''}"></div>`:''}
+    </button>`;
+  }).join('');
+  renderDaySessions();
+}
+
+function selectDay(d){selectedDate=d;renderAgenda();}
+
+function renderDaySessions(){
+  const el=document.getElementById('agenda-sessions');
+  const daySessions=sessions.filter(s=>s.date===selectedDate).sort((a,b)=>a.time.localeCompare(b.time));
+  if(daySessions.length===0){el.innerHTML='<div class="empty"><div class="emoji">🌿</div><div class="fw600">Nenhuma sessão neste dia</div></div>';return;}
+  el.innerHTML=daySessions.map(s=>{
+    const p=patients.find(x=>x.id===s.patientId);
+    return `<div class="card ${s.status==='confirmada'?'border-green':'border-yellow'}">
+      <div class="flex flex-center gap12 mb12">
+        ${p?avatar(p.name,44):''}
+        <div class="f1">
+          <div class="fw700 fs15" style="color:var(--text)">${p?.name||'—'}</div>
+          <div class="text-muted">🕐 ${s.time} · R$ ${p?.value||'—'}</div>
+        </div>
+        <span class="badge ${s.status==='confirmada'?'badge-green':'badge-yellow'}">${s.status==='confirmada'?'✓ Confirmada':'Pendente'}</span>
+      </div>
+      <div class="flex gap8">
+        <button class="btn btn-green f1" onclick="sendConfirm(${s.id})">💬 Confirmar</button>
+        ${s.status!=='confirmada'?`<button class="btn btn-purple f1" onclick="confirmSession(${s.id})">✓ Marcar confirmada</button>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function confirmSession(id){
+  sessions=sessions.map(s=>s.id===id?{...s,status:'confirmada'}:s);
+  renderDaySessions();
+}
+
+function sendConfirm(id){
+  const s=sessions.find(x=>x.id===id);
+  const p=patients.find(x=>x.id===s.patientId);
+  if(!p) return;
+  const msg=encodeURIComponent(`Olá, ${p.name.split(' ')[0]}! 🤍\n\nPassando para confirmar sua sessão:\n📅 ${s.date} às ${s.time}\n\nVocê confirma presença?`);
+  window.open(`https://wa.me/55${p.phone}?text=${msg}`,'_blank');
+}
+
+function renderFinanceiro(){
+  const totalRec=sessions.filter(s=>s.paid).reduce((acc,s)=>{const p=patients.find(x=>x.id===s.patientId);return acc+(p?.value||0);},0);
+  const totalPend=sessions.filter(s=>!s.paid).reduce((acc,s)=>{const p=patients.find(x=>x.id===s.patientId);return acc+(p?.value||0);},0);
+  document.getElementById('total-recebido').textContent=`R$ ${totalRec}`;
+  document.getElementById('total-pendente').textContent=`R$ ${totalPend}`;
+  document.getElementById('pendentes-tab').textContent=`⚠️ Pendentes (${sessions.filter(s=>!s.paid).length})`;
+  renderFinResumo();
+  renderFinPendentes();
+}
+
+function renderFinResumo(){
+  document.getElementById('fin-resumo').innerHTML=patients.map(p=>{
+    const ps=sessions.filter(s=>s.patientId===p.id);
+    const paid=ps.filter(s=>s.paid).length;
+    return `<div class="card">
+      <div class="flex flex-center gap12">
+        ${avatar(p.name,40)}
+        <div class="f1">
+          <div class="fw700 fs14" style="color:var(--text)">${p.name}</div>
+          <div class="text-muted">${paid}/${ps.length} pagas · R$ ${p.value}/sessão</div>
+        </div>
+        <div class="fw800" style="font-size:16px;color:var(--purple)">R$ ${paid*p.value}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderFinPendentes(){
+  const unpaid=sessions.filter(s=>!s.paid);
+  if(unpaid.length===0){document.getElementById('fin-pendentes').innerHTML='<div class="empty"><div class="emoji">🎉</div><div class="fw600">Tudo em dia!</div></div>';return;}
+  document.getElementById('fin-pendentes').innerHTML=unpaid.map(s=>{
+    const p=patients.find(x=>x.id===s.patientId);
+    return `<div class="card border-red">
+      <div class="flex flex-center gap12 mb12">
+        ${p?avatar(p.name,40):''}
+        <div class="f1">
+          <div class="fw700 fs14" style="color:var(--text)">${p?.name||'—'}</div>
+          <div class="text-muted">Sessão ${s.date} · ${s.time}</div>
+        </div>
+        <div class="fw800" style="font-size:16px;color:var(--red)">R$ ${p?.value||'—'}</div>
+      </div>
+      <div class="flex gap8">
+        <button class="btn btn-green f1" onclick="sendCharge(${s.id})">💬 Cobrar</button>
+        <button class="btn btn-purple f1" onclick="markPaid(${s.id})">✓ Marcar pago</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function markPaid(id){sessions=sessions.map(s=>s.id===id?{...s,paid:true}:s);renderFinanceiro();}
+
+function sendCharge(id){
+  const s=sessions.find(x=>x.id===id);
+  const p=patients.find(x=>x.id===s.patientId);
+  if(!p) return;
+  const msg=encodeURIComponent(`Olá, ${p.name.split(' ')[0]}! 🤍\n\nPassando para lembrar sobre o pagamento da sessão de ${s.date}.\n\n💰 Valor: R$ ${p.value}\n\nChave Pix: [SUA CHAVE]\n\nObrigada! 🌿`);
+  window.open(`https://wa.me/55${p.phone}?text=${msg}`,'_blank');
+}
+
+function switchFinTab(tab,btn){
+  document.querySelectorAll('.tab-bar .tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('fin-resumo').style.display=tab==='resumo'?'block':'none';
+  document.getElementById('fin-pendentes').style.display=tab==='pendentes'?'block':'none';
+}
+
+function switchIATab(tab,btn){
+  document.querySelectorAll('#screen-sessao .tab-bar .tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('ia-sala').style.display=tab==='sala'?'block':'none';
+  document.getElementById('ia-analysis').style.display=tab==='ia'?'block':'none';
+}
+
+function renderIAPatients(){
+  const sel=document.getElementById('ia-patient');
+  sel.innerHTML='<option value="">Selecionar paciente...</option>'+patients.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+}
+
+function generateMeet(){
+  const code=Math.random().toString(36).substring(2,5)+'-'+Math.random().toString(36).substring(2,7)+'-'+Math.random().toString(36).substring(2,5);
+  meetLink=`https://meet.google.com/${code}`;
+  document.getElementById('meet-link-display').textContent=meetLink;
+  document.getElementById('meet-link-open').href=meetLink;
+  document.getElementById('meet-result').style.display='block';
+}
+
+function sendMeetWA(){
+  const pid=document.getElementById('ia-patient').value;
+  const p=patients.find(x=>x.id===Number(pid));
+  if(!p){alert('Selecione uma paciente primeiro');return;}
+  const msg=encodeURIComponent(`Olá, ${p.name.split(' ')[0]}! 🤍\n\nAqui está o link para nossa sessão:\n${meetLink}\n\nTe vejo em breve! 🌿`);
+  window.open(`https://wa.me/55${p.phone}?text=${msg}`,'_blank');
+}
+
+async function analyzeTranscript(){
+  const transcript=document.getElementById('transcript').value.trim();
+  if(!transcript){alert('Cole uma transcrição primeiro');return;}
+  const pid=document.getElementById('ia-patient').value;
+  const p=patients.find(x=>x.id===Number(pid));
+  const patientName=p?p.name:'paciente';
+  const btn=document.getElementById('analyze-btn');
+  btn.textContent='🔄 Analisando...';
+  btn.disabled=true;
+  document.getElementById('ia-result').innerHTML='<div class="loading">Analisando transcrição com IA...</div>';
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':API_KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',max_tokens:1000,
+        system:`Você é um assistente clínico para psicólogos. Analise transcrições de sessões terapêuticas e retorne APENAS um JSON válido sem texto adicional: {"resumo":"...","temasPrincipais":["..."],"emocoes":["..."],"pontosCriticos":["..."],"sugestoesProximaSessao":["..."],"notaProntuario":"..."}`,
+        messages:[{role:'user',content:`Analise esta transcrição de sessão com ${patientName}:\n\n${transcript}`}]
+      })
+    });
+    const data=await res.json();
+    const text=data.content?.map(i=>i.text||'').join('')||'';
+    const clean=text.replace(/```json|```/g,'').trim();
+    const result=JSON.parse(clean);
+    document.getElementById('ia-result').innerHTML=`
+      <div class="result-section">
+        <div class="label-sm text-purple">📝 RESUMO CLÍNICO</div>
+        <div style="font-size:14px;color:var(--text);line-height:1.6">${result.resumo}</div>
+      </div>
+      <div class="grid2">
+        <div class="result-section">
+          <div class="label-sm text-purple">🗣️ TEMAS</div>
+          ${result.temasPrincipais?.map(t=>`<span class="tag tag-purple">${t}</span><br>`).join('')}
+        </div>
+        <div class="result-section">
+          <div class="label-sm" style="color:var(--yellow)">💛 EMOÇÕES</div>
+          ${result.emocoes?.map(e=>`<span class="tag tag-yellow">${e}</span><br>`).join('')}
+        </div>
+      </div>
+      <div class="result-section">
+        <div class="label-sm" style="color:var(--red)">⚠️ PONTOS DE ATENÇÃO</div>
+        ${result.pontosCriticos?.map(p=>`<div class="result-row"><span class="result-bullet" style="color:var(--red)">•</span><span style="font-size:13px;color:var(--text);line-height:1.5">${p}</span></div>`).join('')}
+      </div>
+      <div class="result-section">
+        <div class="label-sm" style="color:var(--green)">🌿 PRÓXIMA SESSÃO</div>
+        ${result.sugestoesProximaSessao?.map(s=>`<div class="result-row"><span class="result-bullet" style="color:var(--green)">→</span><span style="font-size:13px;color:var(--text);line-height:1.5">${s}</span></div>`).join('')}
+      </div>
+      <div class="result-section">
+        <div class="label-sm text-purple">📋 NOTA PARA O PRONTUÁRIO</div>
+        <div style="background:var(--purple-pale);border-radius:12px;padding:12px 14px;font-size:13px;color:var(--text);line-height:1.6">${result.notaProntuario}</div>
+        <button class="btn btn-purple btn-full mt12" onclick="navigator.clipboard?.writeText('${result.notaProntuario.replace(/'/g,"\\'")}')">📋 Copiar nota</button>
+      </div>`;
+  }catch(e){
+    document.getElementById('ia-result').innerHTML='<div style="background:#fef2f2;border-radius:16px;padding:16px;color:var(--red)">⚠️ Erro ao analisar. Verifique a transcrição.</div>';
+  }
+  btn.textContent='🧠 Analisar com IA';
+  btn.disabled=false;
+}
+
+renderPatients();
+</script>
+</body>
 </html>
